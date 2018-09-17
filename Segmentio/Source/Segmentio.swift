@@ -330,16 +330,13 @@ open class Segmentio: UIView {
     // MARK: Move shape layer to item
     
     fileprivate func moveShapeLayerAtContext() {
-        let itemWitdh = segmentioItems.enumerated().map { (index, _) -> CGFloat in
-            return segmentWidth(for: IndexPath(item: index, section: 0))
-        }
         if let indicatorLayer = indicatorLayer, let options = segmentioOptions.indicatorOptions {
             let item = itemInSuperview(ratio: options.ratio)
 
             let points = Points(
                 item: item,
                 atIndex: selectedSegmentioIndex,
-                allItemsCellWidth: itemWitdh,
+                allItems: segmentioItems,
                 pointY: indicatorPointY(),
                 position: segmentioOptions.segmentPosition,
                 style: segmentioStyle
@@ -359,7 +356,7 @@ open class Segmentio: UIView {
             let points = Points(
                 item: item,
                 atIndex: selectedSegmentioIndex,
-                allItemsCellWidth: itemWitdh,
+                allItems: segmentioItems,
                 pointY: bounds.midY,
                 position: segmentioOptions.segmentPosition,
                 style: segmentioStyle
@@ -663,16 +660,16 @@ extension Segmentio: UIScrollViewDelegate {
 
 extension Segmentio.Points {
     
-    init(item: Segmentio.ItemInSuperview, atIndex index: Int, allItemsCellWidth: [CGFloat], pointY: CGFloat, position: SegmentioPosition, style: SegmentioStyle) {
+    init(item: Segmentio.ItemInSuperview, atIndex index: Int, allItems: [SegmentioItem], pointY: CGFloat, position: SegmentioPosition, style: SegmentioStyle) {
         let cellWidth = item.cellFrameInSuperview.width
         var startX = item.startX
         var endX = item.endX
         var spaceBefore: CGFloat = 0
         var spaceAfter: CGFloat = 0
         var i = 0
-        allItemsCellWidth.forEach { width in
-            if i < index { spaceBefore += width }
-            if i > index { spaceAfter += width }
+        allItems.forEach { _ in
+            if i < index { spaceBefore += cellWidth }
+            if i > index { spaceAfter +=  cellWidth }
             i += 1
         }
         // Cell will try to position itself in the middle, unless it can't because
